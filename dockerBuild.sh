@@ -24,8 +24,7 @@ if [ "$RUNNABLE_DEPLOYKEY" ]; then
 fi
 
 # GIT CLONE
-# assumes blahblahblah/repo.git
-REPO_DIR=$(echo $RUNNABLE_REPO | awk '{split($0,r,"/"); print r[2]}')
+REPO_DIR=$(echo $RUNNABLE_REPO | awk '{split($0,r,"/"); if (r[1] == "https:") print r[5]; else print r[2];}')
 if [ "$RUNNABLE_REPO" ]; then
   echo "downloading repository..."
   pushd $TEMPDIR > /dev/null
