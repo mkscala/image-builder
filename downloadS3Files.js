@@ -24,6 +24,7 @@ function main () {
 
   var bucket = argv.bucket;
   var prefix = argv.prefix;
+  if (prefix.slice(-1) === '/') { prefix = prefix.slice(0, -1); }
   var files = argv.files ? JSON.parse(argv.files) : null;
   var file = argv.file;
   var dest = argv.dest;
@@ -87,16 +88,36 @@ function downloadFile (bucket, file, prefix, version, dest, callback) {
   }
   s3.getObject(data, function (err, data) {
     if (err) { return callback(err); }
-    file = prefix ? file.slice(prefix.length) : file;
+    file = file.slice(prefix.length);
     var fileName = join(dest, file);
     if (fileName.slice(-1) === '/') {
-      mkdirp.sync(fileName);
-      callback(null, fileName);
+      fs.exists(fileName, function (exists) {
+        if (exists) { callback(null, fileName); }
+        else {
+          mkdirp(fileName, function (err) {
+            console.log(file);
+            callback(err, fileName);
+          });
+        }
+      });
     } else {
-      mkdirp.sync(path.dirname(fileName));
-      fs.writeFile(fileName, data.Body, function (err) {
-        if (err) { return callback(err); }
-        callback(null, fileName);
+      fs.exists(path.dirname(fileName), function (exists) {
+        if (!exists) {
+          mkdirp(path.dirname(fileName), function (err) {
+            if (err) { return callback(err); }
+            fs.writeFile(fileName, data.Body, function (err) {
+              if (err) { return callback(err); }
+              console.log(file);
+              callback(null, fileName);
+            });
+          });
+        } else {
+          fs.writeFile(fileName, data.Body, function (err) {
+            if (err) { return callback(err); }
+            console.log(file);
+            callback(null, fileName);
+          });
+        }
       });
     }
   });
