@@ -7,7 +7,7 @@ A Docker image that is used to build other Docker images using other resources.
 To build the image, from the repository root:
 
 ```
-docker build -t docker-image-builder .
+docker build -t runnable/image-builder .
 ```
 
 ## Building an Image
@@ -36,7 +36,7 @@ docker run \
   -e RUNNABLE_DOCKER='tcp://192.168.59.103:2375' \
   -e RUNNABLE_DOCKERTAG='docker-tag' \
   -e RUNNABLE_DOCKER_BUILDOPTIONS='' \
-  docker-image-builder
+  runnable/image-builder
 ```
 
 - `RUNNABLE_AWS_ACCESS_KEY`: your AWS access key
@@ -53,4 +53,4 @@ docker run \
 
 ## Debugging the Builder
 
-If you need to debug the builder, you can set the environment variables, then additionally set `--rm -ti` as `run` options, and put `bash` on the end of the command after `docker-image-builder`. This will dump you into a shell where you can run `./dockerBuild.sh` to manually run the build!
+If you need to debug the builder, you can set the environment variables, then additionally set `--rm -ti` as `run` options, and put `bash` on the end of the command after `runnable/image-builder`. This will dump you into a shell where you can run `./dockerBuild.sh` to manually run the build!
