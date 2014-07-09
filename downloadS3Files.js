@@ -89,10 +89,15 @@ function downloadFile (bucket, file, prefix, version, dest, callback) {
     if (err) { return callback(err); }
     file = prefix ? file.slice(prefix.length) : file;
     var fileName = join(dest, file);
-    mkdirp.sync(path.dirname(fileName));
-    fs.writeFile(fileName, data.Body, function (err) {
-      if (err) { return callback(err); }
+    if (fileName.slice(-1) === '/') {
+      mkdirp.sync(fileName);
       callback(null, fileName);
-    });
+    } else {
+      mkdirp.sync(path.dirname(fileName));
+      fs.writeFile(fileName, data.Body, function (err) {
+        if (err) { return callback(err); }
+        callback(null, fileName);
+      });
+    }
   });
 }
