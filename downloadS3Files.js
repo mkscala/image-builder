@@ -23,7 +23,7 @@ function main () {
   var argv = require('minimist')(process.argv.slice(2));
 
   var bucket = argv.bucket;
-  var prefix = argv.prefix;
+  var prefix = argv.prefix || '';
   if (prefix.slice(-1) === '/') { prefix = prefix.slice(0, -1); }
   var files = argv.files ? JSON.parse(argv.files) : null;
   var file = argv.file;
