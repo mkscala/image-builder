@@ -51,6 +51,19 @@ docker run \
 - `RUNNABLE_DOCKERTAG`: Tag for the built Docker image
 - `RUNNABLE_DOCKER_BUILDOPTIONS`: other Docker build options
 
+## Multiple Repositories
+
+This supports checking out multiple repositories, with multiple commitishes, and deploy keys. Set the variable using `;` as the separator and it will download all of them. 
+
+The following variables support multiple values:
+
+- `RUNNABLE_DEPLOYKEY`
+- `RUNNABLE_REPO`
+- `RUNNABLE_COMMITISH`
+
+NOTE: `RUNNABLE_REPO` and `RUNNABLE_COMMITISH` need to be a one-to-one correspondence for it to work correctly (does NOT assume `master` or any other value).
+
+
 ## Debugging the Builder
 
 If you need to debug the builder, you can set the environment variables, then additionally set `--rm -ti` as `run` options, and put `bash` on the end of the command after `runnable/image-builder`. This will dump you into a shell where you can run `./dockerBuild.sh` to manually run the build!
