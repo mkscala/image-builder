@@ -15,15 +15,15 @@ fi
 # GET DEPLOY KEY ($RUNNABLE_DEPLOYKEY)
 TEMPKEYDIR=$(mktemp -d /tmp/rnnbl.key.XXXXXXXXXXXXXXXXXXXX)
 if [ "$RUNNABLE_DEPLOYKEY" ]; then
+  if [ "$(ssh-add > /dev/null 2>&1)" != "0" ]; then
+    eval $(ssh-agent) > /dev/null
+  fi
   for KEY in $RUNNABLE_DEPLOYKEY; do
     echo "downloading deploy key..."
     node downloadS3Files.js \
       --bucket "$RUNNABLE_KEYS_BUCKET" \
       --file "$KEY" \
       --dest "$TEMPKEYDIR"
-    if [ "$(ssh-add > /dev/null 2>&1)" != "0" ]; then
-      eval $(ssh-agent) > /dev/null
-    fi
     chmod 600 "$TEMPKEYDIR"/"$KEY"
     ssh-add "$TEMPKEYDIR"/"$KEY"
   done
