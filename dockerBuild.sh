@@ -14,6 +14,7 @@ fi
 
 # GET DEPLOY KEY ($RUNNABLE_DEPLOYKEY)
 TEMPKEYDIR=$(mktemp -d /tmp/rnnbl.key.XXXXXXXXXXXXXXXXXXXX)
+read -a KEY_ARRAY <<< "$RUNNABLE_DEPLOYKEY"
 if [ "$RUNNABLE_DEPLOYKEY" ]; then
   if [ "$(ssh-add > /dev/null 2>&1)" != "0" ]; then
     eval $(ssh-agent) > /dev/null
@@ -25,7 +26,6 @@ if [ "$RUNNABLE_DEPLOYKEY" ]; then
       --file "$KEY" \
       --dest "$TEMPKEYDIR"
     chmod 600 "$TEMPKEYDIR"/"$KEY"
-    ssh-add "$TEMPKEYDIR"/"$KEY"
   done
 fi
 
@@ -38,6 +38,8 @@ do
   REPO_DIR=$(echo "${REPO_ARRAY[index]}" | awk '{split($0,r,"/"); if (r[1] == "https:") print r[5]; else print r[2];}')
   echo "downloading repository... ${REPO_ARRAY[index]}"
   pushd $TEMPDIR > /dev/null
+  ssh-add -D
+  ssh-add "$TEMPKEYDIR"/"${KEY_ARRAY[index]}"
   git clone "${REPO_ARRAY[index]}" "$REPO_DIR"
   if [ "$RUNNABLE_COMMITISH" ]; then
     pushd $REPO_DIR > /dev/null
