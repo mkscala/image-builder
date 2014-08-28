@@ -7,7 +7,7 @@ RUN apt-get update
 RUN apt-get install -y lxc-docker-1.2.0
 
 RUN mkdir $HOME/.ssh
-RUN ssh-keyscan -H github.com > $HOME/.ssh/known_hosts
+RUN ssh-keyscan -H -p 22 github.com >> $HOME/.ssh/known_hosts
 
 ADD ./ /source
 

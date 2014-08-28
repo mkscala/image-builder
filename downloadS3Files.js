@@ -95,7 +95,7 @@ function downloadFile (bucket, file, prefix, version, dest, callback) {
         if (exists) { callback(null, fileName); }
         else {
           mkdirp(fileName, function (err) {
-            console.log(file);
+            console.log('\t' + file);
             callback(err, fileName);
           });
         }
@@ -107,14 +107,14 @@ function downloadFile (bucket, file, prefix, version, dest, callback) {
             if (err) { return callback(err); }
             fs.writeFile(fileName, data.Body, function (err) {
               if (err) { return callback(err); }
-              console.log(file);
+              console.log('\t' + file);
               callback(null, fileName);
             });
           });
         } else {
           fs.writeFile(fileName, data.Body, function (err) {
             if (err) { return callback(err); }
-            console.log(file);
+            console.log('\t' + file);
             callback(null, fileName);
           });
         }
