@@ -8,7 +8,7 @@ IFS=";"
 TEMPDIR=$(mktemp -d /tmp/rnnbl.XXXXXXXXXXXXXXXXXXXX)
 
 if [ ! "$RUNNABLE_AWS_ACCESS_KEY" ] || [ ! "$RUNNABLE_AWS_SECRET_KEY" ]; then
-  echo "\e[1m\e[31mMissing credentials.\e[0m"
+  echo "\e[1m\e[91mMissing credentials.\e[0m"
   exit 1
 fi
 
@@ -70,4 +70,4 @@ if [ "$RUNNABLE_DOCKER" ] && [ "$RUNNABLE_DOCKERTAG" ]; then
   echo ""
 fi
 
-echo "\e[1m\e[32mBuild completed successfully!\e[0m"
+echo "\e[1m\e[92mBuild completed successfully!\e[0m"
