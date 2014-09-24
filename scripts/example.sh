@@ -8,7 +8,7 @@ docker run \
   -e RUNNABLE_FILES='{ "source/Dockerfile": "Po.EGeNr9HirlSJVMSxpf1gaWa5KruPa" }'  \
   -e RUNNABLE_KEYS_BUCKET='runnable.deploykeys'  \
   -e RUNNABLE_DEPLOYKEY='path/to/a/id_rsa'  \
-  -e RUNNABLE_REPO='https://github.com/visionmedia/express'  \
+  -e RUNNABLE_REPO='git@github.com:Runnable/image-builder'  \
   -e RUNNABLE_COMMITISH='master'  \
   -e RUNNABLE_DOCKER='tcp://192.168.59.103:2375' \
   -e RUNNABLE_DOCKERTAG='docker-tag' \
