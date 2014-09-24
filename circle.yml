@@ -1,0 +1,15 @@
+machine:
+  node:
+    version: 0.10.28
+  services:
+    - docker
+test:
+  pre:
+    - npm install docker-mock
+    - node -e "require('docker-mock').listen(5354)":
+        background: true
+    - ps ax | grep docker-mock
+    - ./scripts/getIpAddress.sh > DOCKER_IP
+    - docker build -t test-image-builder .
+  override:
+    - ./scripts/test-circle.sh
