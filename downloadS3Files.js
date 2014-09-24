@@ -54,7 +54,7 @@ function main () {
 
   function handleResponse (err, res) {
     if (err) {
-      console.log(STYLE_BOLD + COLOR_ERROR + err + STYLE_RESET);
+      console.error(STYLE_BOLD + COLOR_ERROR + err + STYLE_RESET);
       process.exit(1);
     }
     process.exit(0);
