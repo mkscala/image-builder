@@ -10,9 +10,9 @@ var fs = require('fs');
 
 var options = {};
 
-var STYLE_BOLD = '\e[1m';
-var STYLE_RESET = '\e[0m';
-var COLOR_ERROR = '\e[91m';
+var STYLE_BOLD = '\033[1m';
+var STYLE_RESET = '\033[0m';
+var COLOR_ERROR = '\033[91m';
 main();
 
 function main () {
