@@ -10,6 +10,9 @@ var fs = require('fs');
 
 var options = {};
 
+var STYLE_BOLD = '\e[1m';
+var STYLE_RESET = '\e[0m';
+var COLOR_ERROR = '\e[91m';
 main();
 
 function main () {
@@ -45,13 +48,13 @@ function main () {
       dest,
       handleResponse);
   } else {
-    console.error('\e[1m\e[91mNeed a file to download!\e[0m');
+    console.error(STYLE_BOLD + COLOR_ERROR + 'Need a file to download!' + STYLE_RESET);
     process.exit(2);
   }
 
   function handleResponse (err, res) {
     if (err) {
-      console.log('\e[1m\e[91m' + err + '\e[0m');
+      console.log(STYLE_BOLD + COLOR_ERROR + err + STYLE_RESET);
       process.exit(1);
     }
     process.exit(0);

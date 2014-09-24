@@ -3,12 +3,17 @@ set -e
 
 # Seperator for lists
 IFS=";"
+STYLE_BOLD="\e[1m"
+STYLE_RESET="\e[0m"
+COLOR_STATUS="\e[93m"
+COLOR_ERROR="\e[91m"
+COLOR_SUCCESS="\e[92m"
 
 # Make a working directory
 TEMPDIR=$(mktemp -d /tmp/rnnbl.XXXXXXXXXXXXXXXXXXXX)
 
 if [ ! "$RUNNABLE_AWS_ACCESS_KEY" ] || [ ! "$RUNNABLE_AWS_SECRET_KEY" ]; then
-  echo "\e[1m\e[91mMissing credentials.\e[0m"
+  echo "${STYLE_BOLD}${COLOR_ERROR}Missing credentials.${STYLE_RESET}"
   exit 1
 fi
 
@@ -33,9 +38,9 @@ read -a REPO_ARRAY <<< "$RUNNABLE_REPO"
 read -a COMMITISH_ARRAY <<< "$RUNNABLE_COMMITISH"
 for index in "${!REPO_ARRAY[@]}"
 do
-  REPO_DIR=$(echo "\e[1m\e[93m${REPO_ARRAY[index]}\e[0m" | awk '{split($0,r,"/"); print r[2];}')
-  REPO_FULL_NAME=$(echo "\e[1m\e[93m${REPO_ARRAY[index]}\e[0m" | awk '{split($0,r,":"); print r[2];}')
-  echo "\e[1m\e[93mCloning '$REPO_FULL_NAME' into './$REPO_DIR'...\e[0m"
+  REPO_DIR=$(echo "${STYLE_BOLD}${COLOR_STATUS}${REPO_ARRAY[index]}${STYLE_RESET}" | awk '{split($0,r,"/"); print r[2];}')
+  REPO_FULL_NAME=$(echo "${STYLE_BOLD}${COLOR_STATUS}${REPO_ARRAY[index]}${STYLE_RESET}" | awk '{split($0,r,":"); print r[2];}')
+  echo "${STYLE_BOLD}${COLOR_STATUS}Cloning '$REPO_FULL_NAME' into './$REPO_DIR'...${STYLE_RESET}"
   pushd $TEMPDIR > /dev/null
   ssh-add -D > /dev/null 2>&1
   ssh-add "$TEMPKEYDIR"/"${KEY_ARRAY[index]}" > /dev/null 2>&1
@@ -51,7 +56,7 @@ done
 
 # S3 DOWNLOAD
 if [ "$RUNNABLE_FILES" ]; then
-  echo "\e[1m\e[93mDownloading build files...\e[0m"
+  echo "${STYLE_BOLD}${COLOR_STATUS}Downloading build files...${STYLE_RESET}"
   node downloadS3Files.js \
     --bucket "$RUNNABLE_FILES_BUCKET" \
     --files "$RUNNABLE_FILES" \
@@ -62,7 +67,7 @@ fi
 
 # DOCKER BUILD
 if [ "$RUNNABLE_DOCKER" ] && [ "$RUNNABLE_DOCKERTAG" ]; then
-  echo "\e[1m\e[93mBuilding box...\e[0m"
+  echo "${STYLE_BOLD}${COLOR_STATUS}Building box...${STYLE_RESET}"
   docker -H\="$RUNNABLE_DOCKER" build \
     -t "$RUNNABLE_DOCKERTAG" \
     $RUNNABLE_DOCKER_BUILDOPTIONS \
@@ -70,4 +75,4 @@ if [ "$RUNNABLE_DOCKER" ] && [ "$RUNNABLE_DOCKERTAG" ]; then
   echo ""
 fi
 
-echo "\e[1m\e[92mBuild completed successfully!\e[0m"
+echo "${STYLE_BOLD}${COLOR_SUCCESS}Build completed successfully!${STYLE_RESET}"
