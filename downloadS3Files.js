@@ -45,13 +45,13 @@ function main () {
       dest,
       handleResponse);
   } else {
-    console.error('Need a file to download!');
+    console.error('\e[1m\e[31mNeed a file to download!\e[0m');
     process.exit(2);
   }
 
   function handleResponse (err, res) {
     if (err) {
-      console.log(err);
+      console.log('\e[1m\e[31m' + err + '\e[0m');
       process.exit(1);
     }
     process.exit(0);

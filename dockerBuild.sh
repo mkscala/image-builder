@@ -8,7 +8,7 @@ IFS=";"
 TEMPDIR=$(mktemp -d /tmp/rnnbl.XXXXXXXXXXXXXXXXXXXX)
 
 if [ ! "$RUNNABLE_AWS_ACCESS_KEY" ] || [ ! "$RUNNABLE_AWS_SECRET_KEY" ]; then
-  echo "Missing credentials."
+  echo "\e[1m\e[31mMissing credentials.\e[0m"
   exit 1
 fi
 
@@ -33,9 +33,9 @@ read -a REPO_ARRAY <<< "$RUNNABLE_REPO"
 read -a COMMITISH_ARRAY <<< "$RUNNABLE_COMMITISH"
 for index in "${!REPO_ARRAY[@]}"
 do
-  REPO_DIR=$(echo "${REPO_ARRAY[index]}" | awk '{split($0,r,"/"); print r[2];}')
-  REPO_FULL_NAME=$(echo "${REPO_ARRAY[index]}" | awk '{split($0,r,":"); print r[2];}')
-  echo "Cloning '$REPO_FULL_NAME' into './$REPO_DIR'..."
+  REPO_DIR=$(echo "\e[1m\e[93m${REPO_ARRAY[index]}\e[0m" | awk '{split($0,r,"/"); print r[2];}')
+  REPO_FULL_NAME=$(echo "\e[1m\e[93m${REPO_ARRAY[index]}\e[0m" | awk '{split($0,r,":"); print r[2];}')
+  echo "\e[1m\e[93mCloning '$REPO_FULL_NAME' into './$REPO_DIR'...\e[0m"
   pushd $TEMPDIR > /dev/null
   ssh-add -D > /dev/null 2>&1
   ssh-add "$TEMPKEYDIR"/"${KEY_ARRAY[index]}" > /dev/null 2>&1
@@ -51,7 +51,7 @@ done
 
 # S3 DOWNLOAD
 if [ "$RUNNABLE_FILES" ]; then
-  echo "Downloading build files..."
+  echo "\e[1m\e[93mDownloading build files...\e[0m"
   node downloadS3Files.js \
     --bucket "$RUNNABLE_FILES_BUCKET" \
     --files "$RUNNABLE_FILES" \
@@ -62,7 +62,7 @@ fi
 
 # DOCKER BUILD
 if [ "$RUNNABLE_DOCKER" ] && [ "$RUNNABLE_DOCKERTAG" ]; then
-  echo "Building image..."
+  echo "\e[1m\e[93mBuilding box...\e[0m"
   docker -H\="$RUNNABLE_DOCKER" build \
     -t "$RUNNABLE_DOCKERTAG" \
     $RUNNABLE_DOCKER_BUILDOPTIONS \
@@ -70,4 +70,4 @@ if [ "$RUNNABLE_DOCKER" ] && [ "$RUNNABLE_DOCKERTAG" ]; then
   echo ""
 fi
 
-echo "Build completed successfully!"
+echo "\e[1m\e[32mBuild completed successfully!\e[0m"
