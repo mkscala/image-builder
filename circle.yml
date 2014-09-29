@@ -5,7 +5,7 @@ machine:
     - docker
 test:
   pre:
-    - npm install docker-mock
+    - npm install docker-mock@^0.1.6
     - node -e "require('docker-mock').listen(5354)":
         background: true
     - ps ax | grep docker-mock
