@@ -1,0 +1,18 @@
+{
+  "name": "image-builder",
+  "private": true,
+  "version": "0.0.0",
+  "description": "record of dependencies for image-builder",
+  "main": "echo \"Error: no main specified\" && exit 1",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bryan Kendall <bryan@runnable.com>",
+  "license": "MIT",
+  "dependencies": {
+    "async": "0.9.0",
+    "aws-sdk": "2.0.17",
+    "minimist": "1.1.0",
+    "mkdirp": "0.5.0"
+  }
+}

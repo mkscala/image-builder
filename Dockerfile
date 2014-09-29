@@ -10,9 +10,10 @@ RUN apt-get install -y lxc-docker-1.2.0
 RUN mkdir $HOME/.ssh
 RUN ssh-keyscan -H -p 22 github.com >> $HOME/.ssh/known_hosts
 
-ADD ./ /source
+ADD ./lib/ /source
 
 WORKDIR /source
 RUN chmod +x ./dockerBuild.sh
-RUN npm install aws-sdk mkdirp async uuid minimist
+RUN chmod +x ./fixFiletreeTimes.sh
+RUN npm install
 CMD ["./dockerBuild.sh"]

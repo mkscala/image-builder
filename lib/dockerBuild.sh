@@ -2,12 +2,16 @@
 set -e
 
 # Seperator for lists
+IFS_BAK=$IFS
 IFS=";"
+# Echo colors
 STYLE_BOLD="\033[1m"
 STYLE_RESET="\033[0m"
 COLOR_STATUS="\033[93m"
 COLOR_ERROR="\033[91m"
 COLOR_SUCCESS="\033[92m"
+# This directory
+BUILDER_LIB_DIR=$(pwd)
 
 # Make a working directory
 TEMPDIR=$(mktemp -d /tmp/rnnbl.XXXXXXXXXXXXXXXXXXXX)
@@ -38,18 +42,28 @@ read -a REPO_ARRAY <<< "$RUNNABLE_REPO"
 read -a COMMITISH_ARRAY <<< "$RUNNABLE_COMMITISH"
 for index in "${!REPO_ARRAY[@]}"
 do
-  REPO_DIR=$(echo -e  "${STYLE_BOLD}${COLOR_STATUS}${REPO_ARRAY[index]}${STYLE_RESET}" | awk '{split($0,r,"/"); print r[2];}')
-  REPO_FULL_NAME=$(echo -e  "${STYLE_BOLD}${COLOR_STATUS}${REPO_ARRAY[index]}${STYLE_RESET}" | awk '{split($0,r,":"); print r[2];}')
+  REPO_DIR=$(echo "${REPO_ARRAY[index]}" | awk '{split($0,r,"/"); print r[2];}')
+  REPO_FULL_NAME=$(echo "${REPO_ARRAY[index]}" | awk '{split($0,r,":"); print r[2];}')
   echo -e  "${STYLE_BOLD}${COLOR_STATUS}Cloning '$REPO_FULL_NAME' into './$REPO_DIR'...${STYLE_RESET}"
   pushd $TEMPDIR > /dev/null
   ssh-add -D > /dev/null 2>&1
   ssh-add "$TEMPKEYDIR"/"${KEY_ARRAY[index]}" > /dev/null 2>&1
   git clone -q "${REPO_ARRAY[index]}" "$REPO_DIR"
+  # Enter the repository
+  pushd $REPO_DIR > /dev/null
+  git checkout -q "${COMMITISH_ARRAY[index]}"
   if [ "$RUNNABLE_COMMITISH" ]; then
-    pushd $REPO_DIR > /dev/null
     git checkout -q "${COMMITISH_ARRAY[index]}"
-    popd > /dev/null
   fi
+  # File the times in the file tree (for Docker ADD improvements)
+  cp "$BUILDER_LIB_DIR"/fixFiletreeTimes.sh ./fixFiletreeTimes.sh
+  chmod +x ./fixFiletreeTimes.sh
+  # don't want anything but error messages out of this script
+  ./fixFiletreeTimes.sh > /dev/null
+  rm ./fixFiletreeTimes.sh
+  # Leave repo folder
+  popd > /dev/null
+  # Leave temp folder
   popd > /dev/null
   echo ""
 done
@@ -76,3 +90,6 @@ if [ "$RUNNABLE_DOCKER" ] && [ "$RUNNABLE_DOCKERTAG" ]; then
 fi
 
 echo -e  "${STYLE_BOLD}${COLOR_SUCCESS}Build completed successfully!${STYLE_RESET}"
+
+IFS=$IFS_BAK
+IFS_BAK=
