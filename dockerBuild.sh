@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
-
+# start at root
+cd /
 # Seperator for lists
 IFS=";"
 STYLE_BOLD="\033[1m"
@@ -44,7 +45,33 @@ do
   pushd $TEMPDIR > /dev/null
   ssh-add -D > /dev/null 2>&1
   ssh-add "$TEMPKEYDIR"/"${KEY_ARRAY[index]}" > /dev/null 2>&1
-  git clone -q "${REPO_ARRAY[index]}" "$REPO_DIR"
+
+  # wait for lock on this repo
+  for $STEP in {1..5); do
+    LOCKED='locked'
+    rm "/cache/$REPO_DIR.lock" 2>&1 >/dev/null && break || sleep $STEP
+    unset LOCKED
+  done
+
+  # if locked use cache, else just clone
+  if [[ $LOCKED ]]; then
+    if [[ "$(ls -A /cache/$REPO_DIR 2>/dev/null)" ]]; then
+      cd "/cache/$REPO_DIR"
+      git fetch --all
+      cd /
+    else
+      git clone -q "${REPO_ARRAY[index]}" "/cache/$REPO_DIR"
+    fi
+
+    cp "/cache/$REPO_DIR" "$REPO_DIR"
+  else
+    # no lock could be held. just clone
+    git clone -q "${REPO_ARRAY[index]}" "$REPO_DIR"
+  fi
+
+  # release copy lock
+  touch "/cache/$REPO_DIR.lock" 2>&1 >/dev/null
+
   if [ "$RUNNABLE_COMMITISH" ]; then
     pushd $REPO_DIR > /dev/null
     git checkout -q "${COMMITISH_ARRAY[index]}"
