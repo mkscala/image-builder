@@ -51,7 +51,7 @@ docker run \
 - `RUNNABLE_DOCKER`: Docker connection information, best formatted `tcp://ipaddress:port`
 - `RUNNABLE_DOCKERTAG`: Tag for the built Docker image
 - `RUNNABLE_DOCKER_BUILDOPTIONS`: other Docker build options
--  `-v /host/path/to/cache:/cache:ro`: cache for github repos
+-  `-v /host/path/to/cache:/cache:rw`: cache for github repos
 
 ## Multiple Repositories
 
