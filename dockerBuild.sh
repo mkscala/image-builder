@@ -46,7 +46,7 @@ do
   ssh-add "$TEMPKEYDIR"/"${KEY_ARRAY[index]}" > /dev/null 2>&1
 
   # wait for lock on this repo
-  for $STEP in {1..5); do
+  for STEP in {1..5}; do
     LOCKED='locked'
     rm "/cache/$REPO_DIR.lock" 2>&1 >/dev/null && break || sleep $STEP
     unset LOCKED
