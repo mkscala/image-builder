@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -e
-# start at root
-cd /
+
 # Seperator for lists
 IFS=";"
 STYLE_BOLD="\033[1m"
@@ -56,9 +55,9 @@ do
   # if locked use cache, else just clone
   if [[ $LOCKED ]]; then
     if [[ "$(ls -A /cache/$REPO_DIR 2>/dev/null)" ]]; then
-      cd "/cache/$REPO_DIR"
+      pushd "/cache/$REPO_DIR" > /dev/null
       git fetch --all
-      cd /
+      popd > /dev/null
     else
       git clone -q "${REPO_ARRAY[index]}" "/cache/$REPO_DIR"
     fi
