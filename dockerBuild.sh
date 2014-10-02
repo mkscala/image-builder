@@ -53,7 +53,6 @@ do
   for STEP in {0..5}; do
     LOCKED='true'
     sleep $STEP
-    # if lock created continue
     mkdir "/cache/$REPO_DIR.lock" 2>&1 >/dev/null && break
     unset LOCKED
   done
@@ -68,10 +67,10 @@ do
       git clone -q "${REPO_ARRAY[index]}" "/cache/$REPO_DIR" || CLONE="true"
     fi
     cp "/cache/$REPO_DIR" "$REPO_DIR" || CLONE="true"
-  else
+  fi
 
   # fallback to clone if anything failed above
-  if [[ "$CLONE" ]]
+  if [[ "$CLONE" ]]; then
     git clone -q "${REPO_ARRAY[index]}" "$REPO_DIR"
   fi
 
