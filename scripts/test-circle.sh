@@ -13,5 +13,5 @@ docker run \
   -e RUNNABLE_DOCKER="$(cat DOCKER_IP):5354" \
   -e RUNNABLE_DOCKERTAG='test-built-image' \
   -e RUNNABLE_DOCKER_BUILDOPTIONS='' \
-  -v ./cache:/cache:rw  \
+  -v $HOME/cache:/cache:rw  \
   test-image-builder
