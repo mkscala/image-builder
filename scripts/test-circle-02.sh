@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+mkdir -p ./test-02/hairy-bear
+mkdir -p ./test-02/hairy-bear.lock
+
 docker run \
   -e RUNNABLE_AWS_ACCESS_KEY="$AWS_ACCESS_KEY" \
   -e RUNNABLE_AWS_SECRET_KEY="$AWS_SECRET_KEY" \
@@ -13,5 +16,5 @@ docker run \
   -e RUNNABLE_DOCKER="$(cat DOCKER_IP):5354" \
   -e RUNNABLE_DOCKERTAG='test-built-image' \
   -e RUNNABLE_DOCKER_BUILDOPTIONS='' \
-  -v $HOME/cache:/cache:rw  \
+  -v ./test-02:/cache:rw \
   test-image-builder

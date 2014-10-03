@@ -12,4 +12,5 @@ test:
     - ./scripts/getIpAddress.sh > DOCKER_IP
     - docker build -t test-image-builder .
   override:
-    - ./scripts/test-circle.sh
+    - ./scripts/test-circle-01.sh
+    - ./scripts/test-circle-02.sh

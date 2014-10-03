@@ -44,11 +44,13 @@ read -a COMMITISH_ARRAY <<< "$RUNNABLE_COMMITISH"
 unset LOCKED
 # will skip cache and clone if set
 unset CLONE
+# ensure we have a /cache directory
+mkdir -p /cache
 for index in "${!REPO_ARRAY[@]}"
 do
   REPO_DIR=$(echo "${REPO_ARRAY[index]}" | awk '{split($0,r,"/"); print r[2];}')
   REPO_FULL_NAME=$(echo "${REPO_ARRAY[index]}" | awk '{split($0,r,":"); print r[2];}')
-  echo -e  "${STYLE_BOLD}${COLOR_STATUS}Cloning '$REPO_FULL_NAME' into './$REPO_DIR'...${STYLE_RESET}"
+  echo -e "${STYLE_BOLD}${COLOR_STATUS}Cloning '$REPO_FULL_NAME' into './$REPO_DIR'...${STYLE_RESET}"
   pushd $TEMPDIR > /dev/null
   ssh-add -D > /dev/null 2>&1
   ssh-add "$TEMPKEYDIR"/"${KEY_ARRAY[index]}" > /dev/null 2>&1
@@ -70,17 +72,17 @@ do
     else
       git clone -q "${REPO_ARRAY[index]}" "/cache/$REPO_DIR" || CLONE="true"
     fi
-    cp "/cache/$REPO_DIR" "$REPO_DIR" || CLONE="true"
+    cp -r "/cache/$REPO_DIR" "$REPO_DIR" || CLONE="true"
+
+    # release copy lock, this will remove stale locks because we did a full git clone.
+    rm -rf "/cache/$REPO_DIR.lock" 2>&1 >/dev/null || true
   fi
 
   # fallback to clone if anything failed above
-  if [[ "$CLONE" ]]; then
+  if [[ "$CLONE" || ! -d "$REPO_DIR" ]]; then
     rm -rf "$REPO_DIR" || true
     git clone -q "${REPO_ARRAY[index]}" "$REPO_DIR"
   fi
-
-  # release copy lock, this will remove stale locks because we did a full git clone.
-  rm -rf "/cache/$REPO_DIR.lock" 2>&1 >/dev/null || true
 
   # Enter the repository
   pushd $REPO_DIR > /dev/null
