@@ -13,4 +13,5 @@ docker run \
   -e RUNNABLE_DOCKER='tcp://192.168.59.103:2375' \
   -e RUNNABLE_DOCKERTAG='docker-tag' \
   -e RUNNABLE_DOCKER_BUILDOPTIONS='' \
+  -v $HOME/cache:/cache:rw \
   docker-image-builder

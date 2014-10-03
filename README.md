@@ -36,6 +36,7 @@ docker run \
   -e RUNNABLE_DOCKER='tcp://192.168.59.103:2375' \
   -e RUNNABLE_DOCKERTAG='docker-tag' \
   -e RUNNABLE_DOCKER_BUILDOPTIONS='' \
+  -v /host/path/to/cache:/cache:rw  \
   runnable/image-builder
 ```
 
@@ -50,10 +51,11 @@ docker run \
 - `RUNNABLE_DOCKER`: Docker connection information, best formatted `tcp://ipaddress:port`
 - `RUNNABLE_DOCKERTAG`: Tag for the built Docker image
 - `RUNNABLE_DOCKER_BUILDOPTIONS`: other Docker build options
+-  `-v /host/path/to/cache:/cache:rw`: cache for github repos
 
 ## Multiple Repositories
 
-This supports checking out multiple repositories, with multiple commitishes, and deploy keys. Set the variable using `;` as the separator and it will download all of them. 
+This supports checking out multiple repositories, with multiple commitishes, and deploy keys. Set the variable using `;` as the separator and it will download all of them.
 
 The following variables support multiple values:
 

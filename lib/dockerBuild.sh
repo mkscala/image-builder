@@ -40,6 +40,10 @@ fi
 # GIT CLONE
 read -a REPO_ARRAY <<< "$RUNNABLE_REPO"
 read -a COMMITISH_ARRAY <<< "$RUNNABLE_COMMITISH"
+# used to check if cache is locked
+unset LOCKED
+# will skip cache and clone if set
+unset CLONE
 for index in "${!REPO_ARRAY[@]}"
 do
   REPO_DIR=$(echo "${REPO_ARRAY[index]}" | awk '{split($0,r,"/"); print r[2];}')
@@ -48,19 +52,50 @@ do
   pushd $TEMPDIR > /dev/null
   ssh-add -D > /dev/null 2>&1
   ssh-add "$TEMPKEYDIR"/"${KEY_ARRAY[index]}" > /dev/null 2>&1
-  git clone -q "${REPO_ARRAY[index]}" "$REPO_DIR"
+
+  # wait for lock on this repo
+  for STEP in {0..5}; do
+    LOCKED='true'
+    sleep $STEP
+    mkdir "/cache/$REPO_DIR.lock" 2>&1 >/dev/null && break
+    unset LOCKED
+  done
+
+  # if locked use cache, else just clone
+  if [[ $LOCKED ]]; then
+    if [[ "$(ls -A /cache/$REPO_DIR 2>/dev/null)" ]]; then
+      pushd "/cache/$REPO_DIR" > /dev/null
+      git fetch --all || CLONE="true"
+      popd > /dev/null
+    else
+      git clone -q "${REPO_ARRAY[index]}" "/cache/$REPO_DIR" || CLONE="true"
+    fi
+    cp "/cache/$REPO_DIR" "$REPO_DIR" || CLONE="true"
+  fi
+
+  # fallback to clone if anything failed above
+  if [[ "$CLONE" ]]; then
+    rm -rf "$REPO_DIR" || true
+    git clone -q "${REPO_ARRAY[index]}" "$REPO_DIR"
+  fi
+
+  # release copy lock, this will remove stale locks because we did a full git clone.
+  rm -rf "/cache/$REPO_DIR.lock" 2>&1 >/dev/null || true
+
   # Enter the repository
   pushd $REPO_DIR > /dev/null
-  git checkout -q "${COMMITISH_ARRAY[index]}"
+
   if [ "$RUNNABLE_COMMITISH" ]; then
     git checkout -q "${COMMITISH_ARRAY[index]}"
   fi
+
   # File the times in the file tree (for Docker ADD improvements)
   cp "$BUILDER_LIB_DIR"/fixFiletreeTimes.sh ./fixFiletreeTimes.sh
   chmod +x ./fixFiletreeTimes.sh
   # don't want anything but error messages out of this script
   ./fixFiletreeTimes.sh > /dev/null
   rm ./fixFiletreeTimes.sh
+
   # Leave repo folder
   popd > /dev/null
   # Leave temp folder
