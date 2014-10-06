@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-mkdir -p ./test-01/hairy-bear
+mkdir -p ./test-01/flaming-octo-nemesis
 
 docker run \
   -e RUNNABLE_AWS_ACCESS_KEY="$AWS_ACCESS_KEY" \

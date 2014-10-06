@@ -59,9 +59,11 @@ do
   for STEP in {0..5}; do
     LOCKED='true'
     sleep $STEP
-    mkdir "/cache/$REPO_DIR.lock" 2>&1 >/dev/null && break
+    echo -n "."
+    mkdir /cache/"$REPO_DIR".lock > /dev/null 2>&1 && break
     unset LOCKED
   done
+  echo ""
 
   # if locked use cache, else just clone
   if [[ $LOCKED ]]; then
@@ -75,7 +77,7 @@ do
     cp -r "/cache/$REPO_DIR" "$REPO_DIR" || CLONE="true"
 
     # release copy lock, this will remove stale locks because we did a full git clone.
-    rm -rf "/cache/$REPO_DIR.lock" 2>&1 >/dev/null || true
+    rm -rf /cache/"$REPO_DIR".lock > /dev/null 2>&1 || true
   fi
 
   # fallback to clone if anything failed above

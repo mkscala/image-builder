@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-mkdir -p ./test-02/hairy-bear
-mkdir -p ./test-02/hairy-bear.lock
+mkdir -p ./test-02/flaming-octo-nemesis
+mkdir -p ./test-02/flaming-octo-nemesis.lock
 
 docker run \
   -e RUNNABLE_AWS_ACCESS_KEY="$AWS_ACCESS_KEY" \
