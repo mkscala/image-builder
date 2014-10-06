@@ -14,3 +14,4 @@ test:
   override:
     - ./scripts/test-circle-01.sh
     - ./scripts/test-circle-02.sh
+    - ./scripts/test-circle-03.sh
