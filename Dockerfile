@@ -15,6 +15,5 @@ ADD ./lib/ /source
 
 WORKDIR /source
 RUN chmod +x ./dockerBuild.sh
-RUN chmod +x ./fixFiletreeTimes.sh
 RUN npm install
 CMD ["./dockerBuild.sh"]
