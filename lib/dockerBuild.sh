@@ -93,13 +93,6 @@ do
     git checkout -q "${COMMITISH_ARRAY[index]}"
   fi
 
-  # File the times in the file tree (for Docker ADD improvements)
-  cp "$BUILDER_LIB_DIR"/fixFiletreeTimes.sh ./fixFiletreeTimes.sh
-  chmod +x ./fixFiletreeTimes.sh
-  # don't want anything but error messages out of this script
-  ./fixFiletreeTimes.sh > /dev/null
-  rm ./fixFiletreeTimes.sh
-
   # Leave repo folder
   popd > /dev/null
   # Leave temp folder
